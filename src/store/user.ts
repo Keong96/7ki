@@ -11,7 +11,7 @@ export const useUserStore = defineStore('user', {
   }),
 
   actions: {
-    async login(payload) {
+    async login(payload: { token: string; nickname: string; userId: string }) {
       this.token = payload.token
       this.nickname = payload.nickname || ''
       this.userId = payload.userId || ''

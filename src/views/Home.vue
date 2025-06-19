@@ -21,7 +21,7 @@
     <aside class="sidebar" :class="{ open: sidebarOpen }">
       <h3>Category</h3>
       <ul>
-        <li v-for="category in categories" :key="category" @click="selectCategory(category)">
+        <li v-for="cat in categoryList" :key="cat.refName" :ref="setSectionRef(cat.refName)" @click="goToCategory(cat.refName)">
           {{ category }}
         </li>
       </ul>
@@ -179,16 +179,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted, type Ref } from 'vue'
 import { useUserStore } from '@/store/user'
-import { computed } from 'vue'
 import Login from './Login.vue'
 import Register from './Register.vue'
-import { fetchGameList, GameItem, launchGame } from '@/utils/api'
+import { fetchGameList, launchGame } from '@/utils/api'
+import type { GameItem } from '@/utils/api'
 import BannerSwiper from '@/components/BannerSwiper.vue'
 import MarqueeBar from '@/components/MarqueeBar.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const userStore = useUserStore()
+
 const isLoggedIn = computed(() => userStore.isLoggedIn)
 const balanceDisplay = computed(() => `$${parseFloat(userStore.balance).toFixed(2)}`)
 
@@ -210,14 +213,12 @@ const displayCount = ref<Record<string, number>>({})
 
 const loadGames = async () => {
   const res = await fetchGameList()
-  gameList.value = res;
+  gameList.value = res
 
-  // 除 recent 外的分类
   const availableCategories = categoryList.value.filter(c => c.refName !== 'recent')
   const totalCategories = availableCategories.length
-
-  // 均分游戏到每个分类
   const distributed: Record<string, GameItem[]> = {}
+
   gameList.value.forEach((game, index) => {
     const catIndex = index % totalCategories
     const catRef = availableCategories[catIndex].refName
@@ -235,8 +236,7 @@ const loadGames = async () => {
 const loadMoreGames = (refName: string) => {
   const total = categoryGames.value[refName]?.length || 0
   const current = displayCount.value[refName] || 0
-  const next = Math.min(current + 9, total)
-  displayCount.value[refName] = next
+  displayCount.value[refName] = Math.min(current + displayLimit, total)
 }
 
 const goToCategory = (refName: string) => {
@@ -244,30 +244,25 @@ const goToCategory = (refName: string) => {
 }
 
 const sectionRefs = ref<Record<string, HTMLElement>>({})
-
-const setSectionRef = (name: string) => (el: HTMLElement | null) => {
-  if (el) sectionRefs.value[name] = el
+const setSectionRef = (name: string) => (el: Element | null) => {
+  if (el instanceof HTMLElement) sectionRefs.value[name] = el
 }
 
 const scrollTo = (refName: string) => {
   const el = sectionRefs.value[refName]
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
-const launchSelectedGame = async (game) => {
+const launchSelectedGame = async (game: GameItem) => {
   if (!userStore.userId) {
     activeModal.value = 'login'
     return
   }
-
-  const url = await launchGame(game.ID, userStore.userId)
+  const url = await launchGame(game.ID, String(userStore.userId))
   if (url) window.open(url, '_blank')
 }
 
 const sidebarOpen = ref(false)
-
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value
 }
@@ -277,7 +272,7 @@ const tabs = [
   { name: 'promo', label: 'Promotion', icon: '/icons/icon_btm_yh.avif' },
   { name: 'agent', label: 'Agent', icon: '/icons/icon_btm_tg.avif' },
   { name: 'support', label: 'Support', icon: '/icons/icon_btm_kf.avif' },
-  { name: 'profile', label: 'Profile', icon: '/icons/icon_btm_wd.avif' },
+  { name: 'profile', label: 'Profile', icon: '/icons/icon_btm_wd.avif' }
 ]
 
 const currentTab = ref('home')
@@ -286,35 +281,32 @@ const switchTab = (tabName: string) => {
 }
 
 const activeModal = ref<'login' | 'register' | null>(null)
-const openLogin = () => {
-  activeModal.value = 'login'
-}
-
-const openRegister = () => {
-  activeModal.value = 'register'
-}
-
-const closeModals = () => {
-  activeModal.value = null
-}
+const openLogin = () => { activeModal.value = 'login' }
+const openRegister = () => { activeModal.value = 'register' }
+const closeModals = () => { activeModal.value = null }
 
 const goToSearch = () => {
   router.push({ name: 'Search' })
 }
 
+const goToDeposit = () => {
+  router.push('/deposit')
+}
+
 onMounted(() => {
-  loadGames();
+  loadGames()
+
   const strip = document.querySelector('.category-strip')
   let isDown = false
-  let startX: number
-  let scrollLeft: number
+  let startX = 0
+  let scrollLeft = 0
 
   if (!strip) return
 
-  strip.addEventListener('mousedown', (e) => {
+  strip.addEventListener('mousedown', (e: MouseEvent) => {
     isDown = true
     strip.classList.add('dragging')
-    startX = e.pageX - strip.offsetLeft
+    startX = e.pageX - strip.getBoundingClientRect().left
     scrollLeft = strip.scrollLeft
   })
 
@@ -328,11 +320,11 @@ onMounted(() => {
     strip.classList.remove('dragging')
   })
 
-  strip.addEventListener('mousemove', (e) => {
+  strip.addEventListener('mousemove', (e: MouseEvent) => {
     if (!isDown) return
     e.preventDefault()
-    const x = e.pageX - strip.offsetLeft
-    const walk = (x - startX) * 1.5 // adjust scroll speed
+    const x = e.pageX - strip.getBoundingClientRect().left
+    const walk = (x - startX) * 1.5
     strip.scrollLeft = scrollLeft - walk
   })
 })
