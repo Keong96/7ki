@@ -60,7 +60,7 @@
 
           <div class="games-grid">
             <div
-              v-for="game in (categoryGames[cat.refName]?.slice(0, displayCount[cat.refName]) || [])"
+              v-for="game in (categoryGames[cat.refName]?.slice(0, Number(displayCount[cat.refName])) || [])"
               :key="game.ID"
               class="game-card"
               @click="launchSelectedGame(game)"
@@ -225,8 +225,12 @@ const goToCategory = (refName: string) => {
 }
 
 const sectionRefs = ref<Record<string, HTMLElement>>({})
-const setSectionRef = (name: string, el: Element | null) => {
-  if (el instanceof HTMLElement) sectionRefs.value[name] = el
+const setSectionRef = (name: string, el: Element | ComponentPublicInstance | null) => {
+  if (el instanceof HTMLElement) {
+    sectionRefs.value[name] = el
+  } else if (el && '$el' in el && el.$el instanceof HTMLElement) {
+    sectionRefs.value[name] = el.$el
+  }
 }
 
 const scrollTo = (refName: string) => {
@@ -274,7 +278,7 @@ onMounted(() => {
 
   let isDown = false, startX = 0, scrollLeft = 0
 
-  strip.addEventListener('mousedown', e => {
+  strip.addEventListener('mousedown', e: MouseEvent => {
     isDown = true
     strip.classList.add('dragging')
     startX = e.pageX - strip.getBoundingClientRect().left
@@ -288,7 +292,7 @@ onMounted(() => {
     isDown = false
     strip.classList.remove('dragging')
   })
-  strip.addEventListener('mousemove', e => {
+  strip.addEventListener('mousemove', e: MouseEvent => {
     if (!isDown) return
     e.preventDefault()
     const x = e.pageX - strip.getBoundingClientRect().left
