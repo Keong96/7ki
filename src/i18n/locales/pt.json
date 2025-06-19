@@ -1,0 +1,9 @@
+{
+    "login": {
+      "title": "Entrar",
+      "username": "Nome de usuário",
+      "password": "Senha",
+      "submit": "Entrar",
+      "loading": "Entrando..."
+    }
+  }
