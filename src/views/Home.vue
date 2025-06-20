@@ -278,7 +278,7 @@ onMounted(() => {
 
   let isDown = false, startX = 0, scrollLeft = 0
 
-  strip.addEventListener('mousedown', e: MouseEvent => {
+  strip.addEventListener('mousedown', (e) => {
     isDown = true
     strip.classList.add('dragging')
     startX = e.pageX - strip.getBoundingClientRect().left
@@ -292,7 +292,7 @@ onMounted(() => {
     isDown = false
     strip.classList.remove('dragging')
   })
-  strip.addEventListener('mousemove', e: MouseEvent => {
+  strip.addEventListener('mousemove', (e) => {
     if (!isDown) return
     e.preventDefault()
     const x = e.pageX - strip.getBoundingClientRect().left
