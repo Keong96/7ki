@@ -177,7 +177,7 @@ const userStore = useUserStore()
 const isLoggedIn = computed(() => userStore.isLoggedIn)
 const balanceDisplay = computed(() => `$${parseFloat(userStore.balance).toFixed(2)}`)
 
-const categoryList = ref([
+const categoryList = ref({ label: string; refName: string }[
   { label: 'Popular', refName: 'popular' },
   { label: 'Cards', refName: 'cards' },
   { label: 'Fishing', refName: 'fishing' },
@@ -225,11 +225,9 @@ const goToCategory = (refName: string) => {
 }
 
 const sectionRefs = ref<Record<string, HTMLElement>>({})
-const setSectionRef = (name: string, el: Element | ComponentPublicInstance | null) => {
-  if (el instanceof HTMLElement) {
+const setSectionRef = (name: string) => (el: any) => {
+  if (el && el instanceof HTMLElement) {
     sectionRefs.value[name] = el
-  } else if (el && '$el' in el && el.$el instanceof HTMLElement) {
-    sectionRefs.value[name] = el.$el
   }
 }
 
@@ -279,6 +277,7 @@ onMounted(() => {
   let isDown = false, startX = 0, scrollLeft = 0
 
   strip.addEventListener('mousedown', (e) => {
+    const mouseEvent = e as MouseEvent
     isDown = true
     strip.classList.add('dragging')
     startX = e.pageX - strip.getBoundingClientRect().left
@@ -293,6 +292,7 @@ onMounted(() => {
     strip.classList.remove('dragging')
   })
   strip.addEventListener('mousemove', (e) => {
+    const mouseEvent = e as MouseEvent
     if (!isDown) return
     e.preventDefault()
     const x = e.pageX - strip.getBoundingClientRect().left
