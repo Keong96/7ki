@@ -50,7 +50,7 @@
         <section
           v-for="cat in categoryList"
           :key="cat.refName"
-          :ref="el => setSectionRef(cat.refName, el)"
+          :ref="setSectionRef(cat.refName)"
           class="category-section"
         >
           <div class="category-header">
@@ -175,7 +175,10 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const isLoggedIn = computed(() => userStore.isLoggedIn)
-const balanceDisplay = computed(() => `$${parseFloat(userStore.balance).toFixed(2)}`)
+const balanceDisplay = computed(() => {
+  const balance = Number(userStore.balance) || 0;
+  return `$${balance.toFixed(2)}`;
+});
 
 const categoryList = ref<{ label: string; refName: string }[]>([
   { label: 'Popular', refName: 'popular' },
@@ -269,36 +272,36 @@ const goToSearch = () => router.push({ name: 'Search' })
 const goToDeposit = () => router.push('/deposit')
 
 onMounted(() => {
-  loadGames()
+  loadGames();
 
-  const strip = document.querySelector('.category-strip')
-  if (!strip) return
+  const strip = document.querySelector('.category-strip') as HTMLElement;
+  if (!strip) return;
 
-  let isDown = false, startX = 0, scrollLeft = 0
+  let isDown = false,
+    startX = 0,
+    scrollLeft = 0;
 
-  strip.addEventListener('mousedown', (e) => {
-    const mouseEvent = e as MouseEvent
-    isDown = true
-    strip.classList.add('dragging')
-    startX = e.pageX - strip.getBoundingClientRect().left
-    scrollLeft = strip.scrollLeft
-  })
+  strip.addEventListener('mousedown', (e: MouseEvent) => {
+    isDown = true;
+    strip.classList.add('dragging');
+    startX = e.pageX - strip.getBoundingClientRect().left;
+    scrollLeft = strip.scrollLeft;
+  });
   strip.addEventListener('mouseleave', () => {
-    isDown = false
-    strip.classList.remove('dragging')
-  })
+    isDown = false;
+    strip.classList.remove('dragging');
+  });
   strip.addEventListener('mouseup', () => {
-    isDown = false
-    strip.classList.remove('dragging')
-  })
-  strip.addEventListener('mousemove', (e) => {
-    const mouseEvent = e as MouseEvent
-    if (!isDown) return
-    e.preventDefault()
-    const x = e.pageX - strip.getBoundingClientRect().left
-    strip.scrollLeft = scrollLeft - (x - startX) * 1.5
-  })
-})
+    isDown = false;
+    strip.classList.remove('dragging');
+  });
+  strip.addEventListener('mousemove', (e: MouseEvent) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - strip.getBoundingClientRect().left;
+    strip.scrollLeft = scrollLeft - (x - startX) * 1.5;
+  });
+});
 </script>
 
 <style scoped>
