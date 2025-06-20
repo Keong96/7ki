@@ -305,6 +305,344 @@ onMounted(() => {
 </script>
 
 <style scoped>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.home-page {
+  max-width: 33vw;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: #e06f8b;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+main {
+  flex: 1;
+  overflow-y: auto;
+}
+main::-webkit-scrollbar {
+  display: none;
+}
+.header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 33vw;
+  height: 50px;
+  background: #b73c60;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  z-index: 1100;
+  box-sizing: border-box;
+}
+.menu-btn {
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+.logo-container img {
+  height: 24px;
+  max-width: 100px;
+  object-fit: contain;
+}
+.auth-buttons .btn {
+  color: white;
+  margin-left: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+}
+.auth-buttons .btn:hover {
+  text-decoration: underline;
+}
+.balance-btn {
+  background-color: #e0f7fa;
+  color: #00796b;
+  font-weight: bold;
+}
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 33vw;
+  height: 65px;
+  background: #c54f72;
+  border-top: 1px solid #ddd;
+  display: flex;
+  z-index: 1100;
+  box-sizing: border-box;
+}
+.bottom-nav button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  font-size: 12px;
+  cursor: pointer;
+  color: #fff;
+  transition: color 0.2s ease;
+  padding: 4px 0;
+}
+.bottom-nav button img {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 4px;
+}
+.bottom-nav button.active {
+  color: #fffb00;
+  font-weight: bold;
+}
+.bottom-nav button.active img {
+  filter: brightness(1.2) saturate(1.5);
+}
+.sidebar {
+  position: fixed;
+  top: 50px;
+  width: 15vw;
+  height: calc(100vh - 100px);
+  background: #f9f9f9;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+.sidebar.open {
+  opacity: 1;
+  visibility: visible;
+}
+.sidebar h3 {
+  margin-bottom: 10px;
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+.sidebar ul li {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.sidebar ul li:hover {
+  background-color: #42b983;
+  color: white;
+}
+.overlay {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 100px);
+  background: rgba(0,0,0,0.4);
+  z-index: 1040;
+}
+.category-content {
+  margin-bottom: 50px;
+  padding: 10px;
+  overflow: visible;
+  box-sizing: border-box;
+}
+.category-content::-webkit-scrollbar {
+  display: none;
+}
+.category-content h2 {
+  margin-bottom: 10px;
+  color: white;
+}
+.games-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+  padding: 25px 0px 0px 25px;
+}
+.game-card {
+  position: relative;
+  width: 30%;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  border-radius: 38px;
+  overflow: hidden;
+  text-align: center;
+  padding: 0;
+  margin: 2px;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease;
+}
+.game-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  z-index: 1;
+  position: relative;
+}
+.game-name {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.search-btn i {
+  font-size: 16px;
+  color: white;
+}
+
+.load-more-trigger {
+  text-align: center;
+  cursor: pointer;
+  padding: 1rem 0;
+  font-size: 14px;
+  color: #fff;
+}
+
+.trigger-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+  color: #ffffff;
+}
+
+.down-arrow-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 1em;
+  height: 1em;
+}
+
+.category-strip {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  gap: 10px;
+  padding: 10px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.category-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.category-tab {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #ffffff;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.category-section {
+  margin-bottom: 24px;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.category-header h2 {
+  color: white;
+  font-size: 18px;
+  margin: 0;
+}
+.view-all-btn {
+  font-size: 13px;
+  background: none;
+  border: none;
+  color: #ffffff;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+@media (max-width: 600px) {
+  .home-page {
+    max-width: 100vw;
+  }
+  .header,
+  .bottom-nav {
+    width: 100vw;
+    left: 0;
+    transform: none;
+  }
+  .sidebar {
+    left: 0;
+    width: 250px;
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .content {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    height: auto;
+  }
+  .game-card {
+    width: 45%;
+  }
+}
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+.modal-content {
+  position: relative;
+}
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+.footer {
+  padding: 2rem;
+  background-color: #b73c60;
   font-size: 0.9rem;
   color: #333;
 }
