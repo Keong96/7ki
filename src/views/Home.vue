@@ -305,5 +305,45 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 原样保留你的 style，未改动，已合并在你现有项目中 */
+  font-size: 0.9rem;
+  color: #333;
+}
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+.footer-column {
+  min-width: 150px;
+}
+.footer-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer-list li {
+  margin-bottom: 0.3rem;
+  cursor: pointer;
+}
+.footer-contact {
+  margin-bottom: 1.5rem;
+}
+.contact-icons {
+  display: flex;
+  gap: 0.5rem;
+}
+.contact-icon {
+  width: 24px;
+  height: 24px;
+}
+.footer-company-info {
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1.4;
+}
 </style>
