@@ -177,7 +177,7 @@ const userStore = useUserStore()
 const isLoggedIn = computed(() => userStore.isLoggedIn)
 const balanceDisplay = computed(() => `$${parseFloat(userStore.balance).toFixed(2)}`)
 
-const categoryList = ref({ label: string; refName: string }[
+const categoryList = ref<{ label: string; refName: string }[]>([
   { label: 'Popular', refName: 'popular' },
   { label: 'Cards', refName: 'cards' },
   { label: 'Fishing', refName: 'fishing' },
