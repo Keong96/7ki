@@ -37,7 +37,7 @@ app.post('/Cash/TransferInOut', (req, res) => {
   const { UserID, Amount } = req.body
   console.log('🔔 /Cash/TransferInOut:', req.body)
 
-  if (!UserID || typeof Amount !== 'number' || typeof RealAmount !== 'number') {
+  if (!UserID || typeof Amount !== 'number') {
     return res.status(400).json({ code: 1, error: 'Missing or invalid required fields' })
   }
 
