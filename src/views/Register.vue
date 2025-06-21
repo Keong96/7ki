@@ -314,4 +314,9 @@ button[type='submit']:hover {
 .fade-leave-to {
   opacity: 0;
 }
+@media (max-width: 600px) {
+  .login-container {
+    width: 75vw;
+  }
+}
 </style>
