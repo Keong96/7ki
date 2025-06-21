@@ -10,7 +10,7 @@ const distPath = path.join(__dirname, 'dist')
 
 // ✅ mock 用户余额（以最小单位计，例如：分）
 const mockUsers = {
-  test: 100000 // 100000 = 100 元
+  test: 100 
 }
 
 // ✅ 查询余额
@@ -27,7 +27,7 @@ app.post('/Cash/Get', (req, res) => {
     code: 0,
     error: '',
     data: {
-      Balance: balance / 1000 // 返回游戏币单位
+      Balance: balance
     }
   })
 })
@@ -50,7 +50,7 @@ app.post('/Cash/TransferInOut', (req, res) => {
   //   return res.status(400).json({ code: 1, error: 'RealAmount mismatch' })
   // }
 
-  const delta = Amount * 1000
+  const delta = Amount
   const currentBalance = mockUsers[UserID]
 
   if (delta < 0 && currentBalance < Math.abs(delta)) {
