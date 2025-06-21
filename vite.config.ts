@@ -10,11 +10,6 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  build: {
-    outDir: 'dist',
-    emptyOutDir: true,
-    minify: false
-  },
   preview: {
     host: true,
     port: process.env.PORT ? Number(process.env.PORT) : undefined,
