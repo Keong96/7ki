@@ -11,10 +11,11 @@ const distPath = path.join(__dirname, 'dist')
 // ✅ 接收厂商回调接口
 app.post('/Cash/Get', (req, res) => {
   console.log('🔔 Received callback:', req.body)
+
   res.json({
     code: 0,
     error: '',
-    data: { Balance: 12 }
+    data: { Balance: 100 }
   })
 })
 
@@ -25,7 +26,6 @@ app.get('/api/ping', (req, res) => {
 
 // ✅ 前端资源服务
 app.use(express.static(distPath))
-
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
