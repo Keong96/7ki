@@ -44,7 +44,7 @@ app.post('/Cash/Get', (req, res) => {
 app.use(express.static(distPath))
 
 // ✅ 前端 history fallback
-app.get('/*', (req, res) => {
+app.get(/^\/(?!api\/|Cash\/).*/, (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'))
 })
 
