@@ -271,7 +271,7 @@ button[type='submit']:hover {
 
 @media (max-width: 600px) {
   .login-container {
-    max-width: 100vw;
+    width: 75vw;
   }
 }
 </style>
