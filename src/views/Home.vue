@@ -491,7 +491,9 @@ main::-webkit-scrollbar {
 }
 .game-card {
   position: relative;
-  width: 30%;
+  flex: 0 0 30%;
+  max-width: 30%;
+  min-width: 30%;
   cursor: pointer;
   border: 1px solid #ddd;
   border-radius: 38px;
