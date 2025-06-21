@@ -8,23 +8,73 @@ app.use(express.json())
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const distPath = path.join(__dirname, 'dist')
 
-// ✅ 接收厂商回调接口
-app.post('/Cash/Get', (req, res) => {
-  console.log('🔔 Received callback:', req.body)
+// ✅ mock 用户余额（以最小单位计，例如：分）
+const mockUsers = {
+  test: 100000 // 100000 = 100 元
+}
 
-  res.json({
+// ✅ 查询余额
+app.post('/Cash/Get', (req, res) => {
+  const { UserID } = req.body
+  console.log('🔔 /Cash/Get:', req.body)
+
+  if (!UserID || !(UserID in mockUsers)) {
+    return res.status(400).json({ code: 1, error: 'User not found', data: null })
+  }
+
+  const balance = mockUsers[UserID]
+  return res.json({
     code: 0,
     error: '',
-    data: { Balance: 100 }
+    data: {
+      Balance: balance / 1000 // 返回游戏币单位
+    }
   })
 })
 
-// ✅ 提供 API 测试
+// ✅ 修改余额
+app.post('/Cash/TransferInOut', (req, res) => {
+  const { UserID, Amount, RealAmount } = req.body
+  console.log('🔔 /Cash/TransferInOut:', req.body)
+
+  if (!UserID || typeof Amount !== 'number' || typeof RealAmount !== 'number') {
+    return res.status(400).json({ code: 1, error: 'Missing or invalid required fields' })
+  }
+
+  if (!(UserID in mockUsers)) {
+    return res.status(400).json({ code: 1, error: 'User not found' })
+  }
+
+  const expectedReal = Amount * 1000
+  if (RealAmount !== expectedReal) {
+    return res.status(400).json({ code: 1, error: 'RealAmount mismatch' })
+  }
+
+  const delta = Amount * 1000
+  const currentBalance = mockUsers[UserID]
+
+  if (delta < 0 && currentBalance < Math.abs(delta)) {
+    return res.status(400).json({ code: 1, error: 'Insufficient balance' })
+  }
+
+  mockUsers[UserID] += delta
+
+  return res.json({
+    code: 0,
+    error: '',
+    data: {
+      Balance: mockUsers[UserID],
+      RealAmount
+    }
+  })
+})
+
+// ✅ 测试 API
 app.get('/api/ping', (req, res) => {
   res.json({ message: 'pong' })
 })
 
-// ✅ 前端资源服务
+// ✅ 静态文件
 app.use(express.static(distPath))
 
 const PORT = process.env.PORT || 3000
