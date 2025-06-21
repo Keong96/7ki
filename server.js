@@ -34,7 +34,7 @@ app.post('/Cash/Get', (req, res) => {
 
 // ✅ 修改余额
 app.post('/Cash/TransferInOut', (req, res) => {
-  const { UserID, Amount, RealAmount } = req.body
+  const { UserID, Amount } = req.body
   console.log('🔔 /Cash/TransferInOut:', req.body)
 
   if (!UserID || typeof Amount !== 'number' || typeof RealAmount !== 'number') {
@@ -45,10 +45,10 @@ app.post('/Cash/TransferInOut', (req, res) => {
     return res.status(400).json({ code: 1, error: 'User not found' })
   }
 
-  const expectedReal = Amount * 1000
-  if (RealAmount !== expectedReal) {
-    return res.status(400).json({ code: 1, error: 'RealAmount mismatch' })
-  }
+  // const expectedReal = Amount * 1000
+  // if (RealAmount !== expectedReal) {
+  //   return res.status(400).json({ code: 1, error: 'RealAmount mismatch' })
+  // }
 
   const delta = Amount * 1000
   const currentBalance = mockUsers[UserID]
@@ -63,8 +63,7 @@ app.post('/Cash/TransferInOut', (req, res) => {
     code: 0,
     error: '',
     data: {
-      Balance: mockUsers[UserID],
-      RealAmount
+      Balance: mockUsers[UserID]
     }
   })
 })
