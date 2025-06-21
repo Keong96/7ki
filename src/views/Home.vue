@@ -244,8 +244,16 @@ const launchSelectedGame = async (game: GameItem) => {
     activeModal.value = 'login'
     return
   }
+
+  const win = window.open('', '_blank') //
+
   const url = await launchGame(game.ID, String(userStore.userId))
-  if (url) window.open(url, '_blank')
+
+  if (url && win) {
+    win.location.href = url
+  } else if (win) {
+    win.close()
+  }
 }
 
 const sidebarOpen = ref(false)
